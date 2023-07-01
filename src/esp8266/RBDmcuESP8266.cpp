@@ -5,11 +5,7 @@
 
 int pulseWidth = 1;
 volatile int current_dim = 0;
-int all_dim = 3;
-int rise_fall = true;
-char user_zero_cross = '0';
-int timeoutPin = 435; // 80us
-int extIntPin = 2; //z-c
+int intervalTime = 400; // 1/80MHz	= 12.5ns  * 400 = 5us
 
 static int toggleCounter = 0;
 static int toggleReload = 25;
@@ -50,8 +46,8 @@ dimmerLamp::dimmerLamp(int user_dimmer_pin, int zc_dimmer_pin):
 void dimmerLamp::timer_init(void)
 {
 	timer1_attachInterrupt(onTimerISR);
-	timer1_enable(TIM_DIV16, TIM_EDGE, TIM_SINGLE);
-	timer1_write(timeoutPin); //100 us
+	timer1_enable(TIM_DIV1, TIM_EDGE, TIM_LOOP);
+	timer1_write(intervalTime); 
 }
 
 void dimmerLamp::ext_int_init(void) 
@@ -77,7 +73,7 @@ void dimmerLamp::setPower(int power)
 		power = 99;
 	}
 	dimPower[this->current_num] = power;
-	dimPulseBegin[this->current_num] = powerBuf[power];
+	dimPulseBegin[this->current_num] = powerBuf[power] * 20; // Timerinterval 5us * max 2000 interrupts = 10ms = 100Hz 
 	
 	delay(1);
 }
@@ -136,7 +132,7 @@ void dimmerLamp::toggleSettings(int minValue, int maxValue)
 	toggleReload = 50;
 }
  
-void isr_ext()
+void IRAM_ATTR isr_ext()
 {
 	for (int i = 0; i < current_dim; i++ ) 
 		if (dimState[i] == ON) 
@@ -147,7 +143,7 @@ void isr_ext()
 
 
 static int k;
-void ICACHE_RAM_ATTR onTimerISR()
+void IRAM_ATTR onTimerISR()
 {	
 	
 	toggleCounter++;
@@ -195,9 +191,9 @@ void ICACHE_RAM_ATTR onTimerISR()
 			}
 		}
 	}
-	if (toggleCounter >= toggleReload) toggleCounter = 1;
-	timer1_write(timeoutPin);	
-	
+	if (toggleCounter >= toggleReload)
+		toggleCounter = 1;
+
 }
 
 #endif
