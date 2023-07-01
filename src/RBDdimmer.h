@@ -69,6 +69,8 @@ class dimmerLamp
         void setMode(DIMMER_MODE_typedef DIMMER_MODE);
         DIMMER_MODE_typedef getMode(void);
         void toggleSettings(int minValue, int maxValue);  
+        void normalSettings(int powerInMax, int powerOutMin, int powerOutMax);
+
 };
 
 #endif

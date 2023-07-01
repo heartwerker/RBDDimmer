@@ -5,10 +5,14 @@
 
 int pulseWidth = 1;
 volatile int current_dim = 0;
-int intervalTime = 800; // 1/80MHz	= 12.5ns  * 400 = 10us
+int intervalTime = 800; // 1/80MHz	= 12.5ns  * 400 = 10us -> 1000 steps in 10ms(50Hz*2)
 
 static int toggleCounter = 0;
 static int toggleReload = 25;
+
+static int powerRangeInMax 	= 100;
+static int powerRangeOutPulseMin 	= 0;
+static int powerRangeOutPulseMax 	= 1000;
 
 static dimmerLamp* dimmer[ALL_DIMMERS];
 volatile uint16_t dimPower[ALL_DIMMERS];
@@ -70,11 +74,11 @@ void dimmerLamp::setPower(int power)
 {	
 	if (power < 0) 
 		power = 0;
-	if (power >= 1000) 
-		power = 1000;
+	if (power >= powerRangeInMax) 
+		power = powerRangeInMax;
 	
 	dimPower[this->current_num] = power;
-	dimPulseBegin[this->current_num] = map(power, 0, 1000, 750, 250);
+	dimPulseBegin[this->current_num] = map(power, 0, powerRangeInMax, powerRangeOutPulseMax, powerRangeOutPulseMin);
 }
 
 int dimmerLamp::getPower(void)
@@ -129,6 +133,13 @@ void dimmerLamp::toggleSettings(int minValue, int maxValue)
 	togMax[this->current_num] = powerBuf[minValue];
 
 	toggleReload = 50;
+}
+
+void dimmerLamp::normalSettings(int powerInMax, int powerOutPulseMin, int powerOutPulseMax)
+{
+	powerRangeInMax = powerInMax;
+	powerRangeOutPulseMin = powerOutPulseMin;
+	powerRangeOutPulseMax = powerOutPulseMax;
 }
  
 void IRAM_ATTR isr_ext()
