@@ -185,3 +185,9 @@ This library can simplify user code with following functions:
   
     10. Function toggleSettings smooth change of dimming value up or down in a defined range
         Example located in \RBDdimmer\examples\SimpleToggleDimmer
+
+# Notes on Fork:
+
+    - FIXed: [Error : ISR NOT IN IRAM](https://github.com/RobotDynOfficial/RBDDimmer/issues/36)
+    - fixed flickering by increasing timer resolution
+    
