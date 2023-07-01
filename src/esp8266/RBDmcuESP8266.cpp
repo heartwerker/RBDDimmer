@@ -5,7 +5,7 @@
 
 int pulseWidth = 1;
 volatile int current_dim = 0;
-int intervalTime = 400; // 1/80MHz	= 12.5ns  * 400 = 5us
+int intervalTime = 800; // 1/80MHz	= 12.5ns  * 400 = 10us
 
 static int toggleCounter = 0;
 static int toggleReload = 25;
@@ -74,7 +74,7 @@ void dimmerLamp::setPower(int power)
 		power = 1000;
 	
 	dimPower[this->current_num] = power;
-	dimPulseBegin[this->current_num] = map(power, 0, 1000, 1500, 500);
+	dimPulseBegin[this->current_num] = map(power, 0, 1000, 750, 250);
 }
 
 int dimmerLamp::getPower(void)
