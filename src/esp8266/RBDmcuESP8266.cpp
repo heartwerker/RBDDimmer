@@ -68,14 +68,13 @@ void dimmerLamp::begin(DIMMER_MODE_typedef DIMMER_MODE, ON_OFF_typedef ON_OFF)
 
 void dimmerLamp::setPower(int power)
 {	
-	if (power >= 99) 
-	{
-		power = 99;
-	}
-	dimPower[this->current_num] = power;
-	dimPulseBegin[this->current_num] = powerBuf[power] * 20; // Timerinterval 5us * max 2000 interrupts = 10ms = 100Hz 
+	if (power < 0) 
+		power = 0;
+	if (power >= 1000) 
+		power = 1000;
 	
-	delay(1);
+	dimPower[this->current_num] = power;
+	dimPulseBegin[this->current_num] = map(power, 0, 1000, 1500, 500);
 }
 
 int dimmerLamp::getPower(void)
