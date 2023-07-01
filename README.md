@@ -187,7 +187,8 @@ This library can simplify user code with following functions:
         Example located in \RBDdimmer\examples\SimpleToggleDimmer
 
 # Notes on Fork:
-
     - FIXed: [Error : ISR NOT IN IRAM](https://github.com/RobotDynOfficial/RBDDimmer/issues/36)
     - fixed flickering by increasing timer resolution
+    - use Power Range:
+        dimmer.normalSettings(1000, 250, 750);
     
